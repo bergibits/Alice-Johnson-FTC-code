@@ -1,0 +1,90 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
+
+@TeleOp(name="MecanumTeleop", group="Äbc")
+public class CarlTeleop extends OpMode
+{
+    public DcMotor frontRight;
+    public DcMotor frontLeft;
+    public DcMotor backRight;
+    public DcMotor backLeft;
+    public DcMotor rightLift;
+    public DcMotor leftLift;
+    public Servo claw;
+
+    public void init()
+    {
+        frontRight = hardwareMap.get(DcMotor.class,"frontRight");
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        frontLeft = hardwareMap.get(DcMotor.class,"frontLeft");
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        backRight = hardwareMap.get(DcMotor.class,"backRight");
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        backLeft = hardwareMap.get(DcMotor.class,"backLeft");
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        rightLift = hardwareMap.get(DcMotor.class,"rightLift");
+        rightLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        leftLift = hardwareMap.get(DcMotor.class,"leftLift");
+        leftLift.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        claw.setDirection(Servo.Direction.FORWARD);
+        claw.setPosition(2.2);
+    }
+
+    public void loop()
+    {
+        joystickDrive(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_stick_y);
+
+        rightLift.setPower(gamepad2.right_stick_y);
+        leftLift.setPower(gamepad2.right_stick_y);
+
+        if(gamepad2.a)
+        {
+            claw.setPosition(.2);
+        }
+        else if(gamepad2.y)
+        {
+            claw.setPosition(.9);
+        }
+    }
+
+    public void stop()
+    {
+        joystickDrive(0,0,0,0);
+    }
+
+    public void joystickDrive(double leftStickX, double leftStickY, double rightStickX, double rightStickY)
+    {
+        double forward = leftStickY;
+        double right = leftStickX;
+        double clockwise = rightStickX;
+
+        double lF = (forward + clockwise + right);
+        double rF = (forward - clockwise - right);
+        double lB = (forward + clockwise - right);
+        double rB = (forward - clockwise + right);
+
+        frontRight.setPower(rF);
+        frontLeft.setPower(lF);
+        backRight.setPower(rB);
+        backLeft.setPower(lB);
+    }
+}
